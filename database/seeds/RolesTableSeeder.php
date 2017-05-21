@@ -5,6 +5,8 @@ use Illuminate\Database\Seeder;
 
 class RolesTableSeeder extends Seeder
 {
+    protected $table = 'roles';
+
     /**
      * Run the database seeds.
      *
@@ -14,13 +16,21 @@ class RolesTableSeeder extends Seeder
     {
         $now = Carbon::now();
 
-        // Reset table
-        DB::table('roles')->delete();
+        $defaultRoles = collect(['admin', 'partner']);
 
-        // Create admin user
-        DB::table('roles')->insert([
-            ['name' => 'admin', 'created_at' => $now, 'updated_at' => $now],
-            ['name' => 'partner', 'created_at' => $now, 'updated_at' => $now]
-        ]);
+        // Get the roles which are not inserted into table
+        $roles = DB::table($this->table)->pluck('name');
+        $roles = $defaultRoles->diff($roles);
+
+        if ($roles->count() != 0) {
+
+            $data = [];
+            foreach ($roles as $role) {
+                $data[] = ['name' => $role, 'created_at' => $now, 'updated_at' => $now];
+            }
+
+            DB::table('roles')->insert($data);
+        }
+
     }
 }

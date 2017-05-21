@@ -2,13 +2,14 @@
 
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Validator;
 
 class UsersTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
      * @return void
+     * @throws Exception
      */
     public function run()
     {
@@ -24,14 +25,28 @@ class UsersTableSeeder extends Seeder
         // Reset table
         DB::table('users')->delete();
 
-        // Create admin user
-        DB::table('users')->insert([
+        $adminUser = [
             'name' => 'Administrator',
-            'email' => 'admin@hotelquickly.com',
+            'email' => env('APP_ADMIN'),
             'password' => bcrypt('admin'),
             'role_id' => $adminRole,
             'created_at' => $now,
             'updated_at' => $now
-        ]);
+        ];
+
+        $validator = Validator::make($adminUser,
+            ['email' => 'required|email|max:150'],
+            [
+                'email.required' => 'Please enter email address for admin user',
+                'email.email' => 'Please enter valid email address for admin user'
+            ]
+        );
+
+        if ($validator->fails()) {
+            throw new Exception($validator->errors()->first('email'));
+        }
+
+        // Create admin user
+        DB::table('users')->insert($adminUser);
     }
 }

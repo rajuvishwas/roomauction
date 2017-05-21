@@ -9,6 +9,7 @@ class User extends Authenticatable
 {
     use Notifiable;
 
+    const ROLE_ADMIN = 1;
     const ROLE_PARTNER = 2;
 
     /**
@@ -46,5 +47,9 @@ class User extends Authenticatable
     public function role()
     {
         return $this->belongsTo('App\Models\Role');
+    }
+
+    public function isAdmin() {
+        return ( $this->role->id == self::ROLE_ADMIN ) ? true : false;
     }
 }

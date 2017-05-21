@@ -15,6 +15,13 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Auth::routes();
+Route::group(['middleware' => 'auth'], function() {
 
-Route::get('/home', 'HomeController@index')->name('home');
+    Route::resource('rooms', 'RoomController');
+    Route::resource('auctions', 'AuctionController');
+    Route::resource('bids', 'AuctionController');
+    Route::get('/home', 'HomeController@index')->name('home');
+
+});
+
+Auth::routes();
