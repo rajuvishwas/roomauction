@@ -21,7 +21,6 @@ class CreateAuctionsTable extends Migration
                 ->references('id')->on('rooms')
                 ->onDelete('cascade');
 
-            $table->boolean('is_active');
             $table->timestamps();
             $table->timestamp('expires_at')->nullable();
         });

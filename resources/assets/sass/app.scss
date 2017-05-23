@@ -7,3 +7,8 @@
 
 // Bootstrap
 @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+
+.thead-inverse th {
+  color: #fff;
+  background-color: #292b2c;
+}
