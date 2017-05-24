@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Eloquent;
 
+use App\Pagination\CursorPaginator;
 use Illuminate\Contracts\Encryption\DecryptException;
 
 abstract class Repository
@@ -19,11 +20,13 @@ abstract class Repository
     /**
      * @param int $perPage
      * @param array $columns
-     * @return mixed
+     * @param string $key
+     * @param string $order
+     * @return CursorPaginator
      */
-    public function paginate($perPage = 20, $columns = array('*'))
+    public function paginate($perPage = 20, $columns = array('*'), $key = 'id', $order = 'asc')
     {
-        return $this->model->paginate($perPage, $columns)->appends('');
+        return $this->cursorPaginate($perPage, $columns, $key, $order);
     }
 
     /**
@@ -83,18 +86,133 @@ abstract class Repository
 
     /**
      * @param $key
-     * @param array $columns
      * @return mixed|null
      */
-    public function findByKey($key, $columns = array('*'))
+    public function decrypt($key)
     {
         try {
-            $id = decrypt($key);
-            return $this->find($id, $columns);
+            return decrypt($key);
         } catch (DecryptException $decryptException) {
             return null;
         }
 
+    }
+
+    /**
+     * @param $perPage
+     * @param $columns
+     * @param $key
+     * @param $order
+     * @param bool $encoded
+     * @return CursorPaginator
+     */
+    private function cursorPaginate($perPage, $columns, $key, $order, $encoded = true)
+    {
+        // only accept asc or desc
+        $order = strtolower($order) == 'asc' ? 'asc' : 'desc';
+
+        if (!in_array('*', $columns) && !in_array($key, $columns))
+            array_push($columns, $key);
+
+        $before = $this->decode(request('before'), $encoded);
+        $after = $this->decode(request('after'), $encoded);
+
+        $result = $this->model;
+
+        if ($before != "") {
+
+            $result = $result->where($key, $this->reverseComparator('<', $order), $before)
+                ->limit($perPage)
+                ->orderBy($key, $this->reverseOrderBy($order))
+                ->get($columns)
+                ->reverse();
+
+        } else {
+
+            if ($after != "") {
+                $result = $result->where($key, $this->reverseComparator('>', $order), $after);
+            }
+
+            $result = $result->limit($perPage)->orderBy($key, $order)->get($columns);
+        }
+
+        if (!$result->isEmpty()) {
+
+            $before = $result->first()->$key;
+            $lastItem = $result->slice(0, $perPage);
+            $after = $lastItem->last()->$key;
+
+            $previous = $this->model
+                ->where($key, $this->reverseComparator('<', $order), $before)
+                ->orderBy($key, $order)
+                ->limit(1)
+                ->first();
+
+            $next = $this->model
+                ->where($key, $this->reverseComparator('>', $order), $after)
+                ->orderBy($key, $order)
+                ->limit(1)
+                ->first();
+
+            $isFirstPage = ( $previous == null ) ? true : false;
+            $isLastPage = ( $next == null ) ? true : false;
+
+            return new CursorPaginator(
+                $result,
+                $perPage,
+                $isFirstPage,
+                $isLastPage,
+                $this->encode($before, $encoded),
+                $this->encode($after, $encoded)
+            );
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param $order
+     * @return string
+     */
+    private function reverseOrderBy($order)
+    {
+        return ( $order == 'asc' ) ? 'desc' : 'asc';
+    }
+
+    /**
+     * @param $value
+     * @param bool $encoded
+     * @return bool|string
+     */
+    private function decode($value, $encoded = true)
+    {
+        return ($encoded) ? base64_decode($value) : $value;
+    }
+
+    /**
+     * @param $value
+     * @param bool $encoded
+     * @return string
+     */
+    private function encode($value, $encoded = true)
+    {
+        return ($encoded) ? base64_encode($value) : $value;
+    }
+
+    /**
+     * @param $comparator
+     * @param $order
+     * @return string
+     */
+    private function reverseComparator($comparator, $order) {
+
+        if($order == 'desc' && $comparator == '<') {
+            return '>';
+        } else if($order == 'desc' && $comparator == '>') {
+            return '<';
+        }
+
+        return $comparator;
     }
 
 }

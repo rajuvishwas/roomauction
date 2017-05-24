@@ -44,6 +44,8 @@
                             @endif
                         </table>
 
+                        {{ $rooms->links() }}
+
                     </div>
                 </div>
             </div>

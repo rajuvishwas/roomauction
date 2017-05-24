@@ -8,7 +8,8 @@
 // Bootstrap
 @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 
-.thead-inverse th {
+.table > thead.thead-inverse > tr > th {
   color: #fff;
   background-color: #292b2c;
+  border-bottom: 0px;
 }

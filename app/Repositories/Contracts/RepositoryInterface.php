@@ -6,7 +6,7 @@ interface RepositoryInterface
 {
     public function all($columns = array('*'));
 
-    public function paginate($perPage = 20, $columns = array('*'));
+    public function paginate($perPage = 20, $columns = array('*'), $key = 'id', $order = 'asc');
 
     public function create(array $data);
 
@@ -18,5 +18,5 @@ interface RepositoryInterface
 
     public function findBy($field, $value, $columns = array('*'));
 
-    public function findByKey($key, $columns = array('*'));
+    public function decrypt($key);
 }
