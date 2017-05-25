@@ -2,13 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AuctionRequest;
+use App\Repositories\Contracts\AuctionRepositoryInterface as Auction;
+use App\Repositories\Contracts\RoomRepositoryInterface as Room;
 use Illuminate\Http\Request;
 
 class AuctionController extends Controller
 {
-    public function __construct()
+    /**
+     * @var Auction
+     */
+    private $auctionRepository;
+
+    /**
+     * @var Room
+     */
+    private $roomRepository;
+
+    public function __construct(Auction $auctionRepository, Room $roomRepository)
     {
         $this->middleware('auth.admin')->except('index', 'show');
+        $this->auctionRepository = $auctionRepository;
+        $this->roomRepository = $roomRepository;
     }
 
     /**
@@ -18,7 +33,8 @@ class AuctionController extends Controller
      */
     public function index()
     {
-        return view('auctions.index');
+        $auctions = $this->auctionRepository->auctionable();
+        return view('auctions.index', compact('auctions'));
     }
 
     /**
@@ -28,18 +44,22 @@ class AuctionController extends Controller
      */
     public function create()
     {
-        //
+        $rooms = $this->roomRepository->inactive();
+        return view('auctions.create', compact('rooms'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param AuctionRequest|Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(AuctionRequest $request)
     {
-        //
+        $this->auctionRepository->create($request->all());
+
+        return redirect('auctions')
+            ->with('status', 'Auction has been added');
     }
 
     /**

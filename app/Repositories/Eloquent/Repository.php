@@ -106,7 +106,7 @@ abstract class Repository
      * @param bool $encoded
      * @return CursorPaginator
      */
-    private function cursorPaginate($perPage, $columns, $key, $order, $encoded = true)
+    private function cursorPaginate($perPage, $columns, $key, $order)
     {
         // only accept asc or desc
         $order = strtolower($order) == 'asc' ? 'asc' : 'desc';
@@ -114,8 +114,8 @@ abstract class Repository
         if (!in_array('*', $columns) && !in_array($key, $columns))
             array_push($columns, $key);
 
-        $before = $this->decode(request('before'), $encoded);
-        $after = $this->decode(request('after'), $encoded);
+        $before = $this->decode(request('before'));
+        $after = $this->decode(request('after'));
 
         $result = $this->model;
 
@@ -162,8 +162,8 @@ abstract class Repository
                 $perPage,
                 $isFirstPage,
                 $isLastPage,
-                $this->encode($before, $encoded),
-                $this->encode($after, $encoded)
+                $this->encode($before),
+                $this->encode($after)
             );
         }
 
@@ -184,9 +184,9 @@ abstract class Repository
      * @param bool $encoded
      * @return bool|string
      */
-    private function decode($value, $encoded = true)
+    private function decode($value)
     {
-        return ($encoded) ? base64_decode($value) : $value;
+        return (env('APP_ENCODED_PAGINATOR')) ? base64_decode($value) : $value;
     }
 
     /**
@@ -194,9 +194,9 @@ abstract class Repository
      * @param bool $encoded
      * @return string
      */
-    private function encode($value, $encoded = true)
+    private function encode($value)
     {
-        return ($encoded) ? base64_encode($value) : $value;
+        return (env('APP_ENCODED_PAGINATOR')) ? base64_encode($value) : $value;
     }
 
     /**

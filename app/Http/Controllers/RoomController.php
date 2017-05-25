@@ -55,7 +55,7 @@ class RoomController extends Controller
         $this->repository->create($request->all());
 
         return redirect('rooms')
-            ->with('status', 'Room has been created');
+            ->with('status', 'Room has been added');
     }
 
     /**

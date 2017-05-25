@@ -103,4 +103,9 @@ class CursorPaginator extends Paginator
             . http_build_query($parameters, '', '&')
             . $this->buildFragment();
     }
+
+    public function hasPages()
+    {
+        return ( $this->isFirstPage != $this->isLastPage ) || $this->hasMorePages();
+    }
 }
