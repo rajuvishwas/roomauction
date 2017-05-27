@@ -13,9 +13,12 @@ class AuctionRepository extends Repository implements AuctionRepositoryInterface
      */
     protected $model;
 
+    /**
+     * AuctionRepository constructor.
+     * @param Auction $model
+     */
     public function __construct(Auction $model)
     {
-
         $this->model = $model;
     }
 
@@ -25,7 +28,7 @@ class AuctionRepository extends Repository implements AuctionRepositoryInterface
      */
     public function create(array $data)
     {
-        $data['expires_at'] = Carbon::now()->addMinute(env('APP_AUCTION_EXPIRES'));
+        $data['expires_at'] = Carbon::now()->addMinute(config('app.auction_expires'));
         return parent::create($data);
     }
 
@@ -34,6 +37,16 @@ class AuctionRepository extends Repository implements AuctionRepositoryInterface
      */
     public function auctionable()
     {
-        return $this->model->auctionable()->get();
+        return $this->model->with('latestBid')->withCount('bids')->auctionable()->get();
+    }
+
+    /**
+     * @param $id
+     * @param array $columns
+     * @return mixed
+     */
+    public function find($id, $columns = array('*'))
+    {
+        return $this->model->with('latestBid')->withCount('bids')->find($id, $columns);
     }
 }

@@ -19,7 +19,7 @@ Route::group(['middleware' => 'auth'], function() {
 
     Route::resource('rooms', 'RoomController');
     Route::resource('auctions', 'AuctionController');
-    Route::resource('bids', 'AuctionController');
+    Route::resource('bids', 'BidController');
     Route::get('/home', 'HomeController@index')->name('home');
 
 });

@@ -6,12 +6,27 @@ use Illuminate\Database\Eloquent\Model;
 
 class Bid extends Model
 {
+    protected $fillable = ['user_id', 'auction_id', 'price', 'is_accepted'];
+
+    protected $appends = ['display_price'];
+
+    /**
+     * Default value for attributes
+     *
+     * @var array
+     */
+    protected $attributes = [
+        'is_accepted' => false,
+        'is_winner' => false
+    ];
+
     /**
      * Get the user for this bid
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo('App\Models\User');
     }
 
@@ -20,7 +35,21 @@ class Bid extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function auction() {
+    public function auction()
+    {
         return $this->belongsTo('App\Models\Auction');
+    }
+
+    /**
+     * @return string
+     */
+    public function getDisplayPriceAttribute()
+    {
+        return config('app.currency_symbol') .' '. $this->price;
+    }
+
+    public function scopeAccepted($query) {
+
+        return $query->where('is_accepted', true);
     }
 }

@@ -30,7 +30,7 @@ class RoomController extends Controller
      */
     public function index()
     {
-        $rooms = $this->repository->paginate(env('APP_RESULTS_PER_PAGE'));
+        $rooms = $this->repository->paginate(config('app.results_per_page'));
         return view('rooms.index', compact('rooms'));
     }
 
@@ -55,7 +55,7 @@ class RoomController extends Controller
         $this->repository->create($request->all());
 
         return redirect('rooms')
-            ->with('status', 'Room has been added');
+            ->with('status', 'Room has been added.');
     }
 
     /**

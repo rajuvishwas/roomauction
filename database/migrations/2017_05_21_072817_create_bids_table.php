@@ -29,7 +29,6 @@ class CreateBidsTable extends Migration
 
             $table->float('price');
             $table->boolean('is_accepted');
-            $table->boolean('is_winner');
             $table->timestamps();
         });
     }

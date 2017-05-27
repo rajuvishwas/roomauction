@@ -3,8 +3,10 @@
 namespace App\Providers;
 
 use App\Repositories\Contracts\AuctionRepositoryInterface;
+use App\Repositories\Contracts\BidRepositoryInterface;
 use App\Repositories\Contracts\RoomRepositoryInterface;
 use App\Repositories\Eloquent\AuctionRepository;
+use App\Repositories\Eloquent\BidRepository;
 use App\Repositories\Eloquent\RoomRepository;
 use Illuminate\Support\ServiceProvider;
 
@@ -29,5 +31,6 @@ class DatabaseServiceProvider extends ServiceProvider
     {
         $this->app->bind(RoomRepositoryInterface::class, RoomRepository::class);
         $this->app->bind(AuctionRepositoryInterface::class, AuctionRepository::class);
+        $this->app->bind(BidRepositoryInterface::class, BidRepository::class);
     }
 }

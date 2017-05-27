@@ -230,4 +230,20 @@ return [
 
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Application Custom Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Custom Configuration we require for application
+    |
+    */
+
+    'admin' => env('APP_ADMIN', 'admin@roomquickly.com'),
+    'results_per_page' => env('APP_RESULTS_PER_PAGE', 20),
+    'encoded_paginator' => env('APP_ENCODED_PAGINATOR', true),
+    'auction_expires' => env('APP_AUCTION_EXPIRES', 10),
+    'currency_symbol' => env('APP_CURRENCY_SYMBOL', '&#3647;'),
+    'bid_accepted_percent' => env('APP_BID_ACCEPTED_PERCENT', 5),
+
 ];

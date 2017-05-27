@@ -81,7 +81,7 @@ abstract class Repository
         if ($result->count() == 1)
             return $result->first($columns);
 
-        return $result;
+        return $result->get();
     }
 
     /**
@@ -99,14 +99,15 @@ abstract class Repository
     }
 
     /**
+     * @param array $where
      * @param $perPage
      * @param $columns
      * @param $key
      * @param $order
-     * @param bool $encoded
      * @return CursorPaginator
+     * @internal param bool $encoded
      */
-    private function cursorPaginate($perPage, $columns, $key, $order)
+    protected function cursorPaginate($perPage, $columns, $key, $order, array $filters = array())
     {
         // only accept asc or desc
         $order = strtolower($order) == 'asc' ? 'asc' : 'desc';
@@ -118,6 +119,10 @@ abstract class Repository
         $after = $this->decode(request('after'));
 
         $result = $this->model;
+
+        if(count($filters) != 0) {
+            $result = $result->where($filters);
+        }
 
         if ($before != "") {
 
@@ -139,16 +144,17 @@ abstract class Repository
         if (!$result->isEmpty()) {
 
             $before = $result->first()->$key;
-            $lastItem = $result->slice(0, $perPage);
-            $after = $lastItem->last()->$key;
+            $after = $result->last()->$key;
 
             $previous = $this->model
                 ->where($key, $this->reverseComparator('<', $order), $before)
+                ->where($filters)
                 ->orderBy($key, $order)
                 ->limit(1)
                 ->first();
 
             $next = $this->model
+                ->where($filters)
                 ->where($key, $this->reverseComparator('>', $order), $after)
                 ->orderBy($key, $order)
                 ->limit(1)
@@ -186,7 +192,7 @@ abstract class Repository
      */
     private function decode($value)
     {
-        return (env('APP_ENCODED_PAGINATOR')) ? base64_decode($value) : $value;
+        return (config('app.encoded_paginator')) ? base64_decode($value) : $value;
     }
 
     /**
@@ -196,7 +202,7 @@ abstract class Repository
      */
     private function encode($value)
     {
-        return (env('APP_ENCODED_PAGINATOR')) ? base64_encode($value) : $value;
+        return (config('app.encoded_paginator')) ? base64_encode($value) : $value;
     }
 
     /**

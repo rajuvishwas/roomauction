@@ -10,4 +10,26 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
+    /**
+     * @param $to
+     * @param $message
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    protected function sendErrorResponse($to, $message)
+    {
+        return redirect($to)
+            ->with('error', $message);
+    }
+
+    /**
+     * @param $to
+     * @param $message
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    protected function sendInfoResponse($to, $message)
+    {
+        return redirect($to)
+            ->with('info', $message);
+    }
 }

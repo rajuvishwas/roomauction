@@ -21,6 +21,8 @@
                             <tr>
                                 <th width="10%">ID</th>
                                 <th>Room</th>
+                                <th width="10%"># Bids</th>
+                                <th width="10%">Latest Bid</th>
                                 <th width="20%">Time Remaining</th>
                                 <th width="20%">Action</th>
                             </tr>
@@ -31,9 +33,13 @@
                                     <tr>
                                         <th scope="row">{{ $row->id }}</th>
                                         <td>{{ $row->room->name }}</td>
-                                        <td>{{ $row->displayTimeLeft() }}</td>
+                                        <td>{{ $row->bids_count != 0 ? $row->bids_count : '-' }}</td>
+                                        <td>{{ $row->latestBid != null ? $row->latestBid->display_price : '-' }}</td>
+                                        <td>{{ $row->time_left }}</td>
                                         <td>
-                                            <a class="btn btn-info btn-xs" href="#" role="button">Bid</a>
+                                            <a class="btn btn-info btn-xs"
+                                               href="{{ route('auctions.show', ['id' => $row->id]) }}"
+                                               role="button">Bid</a>
                                             @if(Auth::user()->isAdmin())
                                                 <a class="btn btn-danger btn-xs" href="#" role="button">Delete</a>
                                             @endif

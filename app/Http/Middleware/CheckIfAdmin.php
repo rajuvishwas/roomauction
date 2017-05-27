@@ -16,7 +16,7 @@ class CheckIfAdmin
     public function handle($request, Closure $next)
     {
         if(!$request->user()->isAdmin()) {
-            return redirect('/home');
+            return redirect('/home')->with('error', 'Unauthorized Access');
         }
 
         return $next($request);

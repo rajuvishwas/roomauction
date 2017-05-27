@@ -11,6 +11,8 @@ class Auction extends Model
 
     protected $dates = ['expires_at'];
 
+    protected $appends = ['time_left', 'has_expired'];
+
     /**
      * Get the room for this auction
      *
@@ -31,6 +33,11 @@ class Auction extends Model
         return $this->hasMany('App\Models\Bid');
     }
 
+    public function latestBid()
+    {
+        return $this->hasOne('App\Models\Bid')->accepted()->latest();
+    }
+
     /**
      * Get lists of auctionable rooms
      *
@@ -42,8 +49,17 @@ class Auction extends Model
         return $query->where('expires_at', '>=', Carbon::now())->orderBy('expires_at');
     }
 
-    public function displayTimeLeft()
+    public function getHasExpiredAttribute()
+    {
+        return Carbon::now() >= $this->expires_at;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTimeleftAttribute()
     {
         return $this->expires_at->diffForHumans(Carbon::now(), true);
     }
+
 }

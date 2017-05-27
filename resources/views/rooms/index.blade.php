@@ -44,7 +44,9 @@
                             @endif
                         </table>
 
+                        @if($rooms->count() != 0)
                         {{ $rooms->links() }}
+                        @endif
 
                     </div>
                 </div>

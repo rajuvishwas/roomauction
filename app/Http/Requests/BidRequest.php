@@ -13,7 +13,7 @@ class BidRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,8 @@ class BidRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'auction_id' => 'required|integer',
+            'price' => 'required|integer'
         ];
     }
 }
