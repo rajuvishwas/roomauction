@@ -24,7 +24,7 @@
                                 <th width="10%"># Bids</th>
                                 <th width="10%">Latest Bid</th>
                                 <th width="20%">Time Remaining</th>
-                                <th width="20%">Action</th>
+                                <th width="10%">Action</th>
                             </tr>
                             </thead>
                             @if($auctions->count() != 0)
@@ -40,17 +40,13 @@
                                             <a class="btn btn-info btn-xs"
                                                href="{{ route('auctions.show', ['id' => $row->id]) }}"
                                                role="button">Bid</a>
-                                            @if(Auth::user()->isAdmin())
-                                                <a class="btn btn-danger btn-xs" href="#" role="button">Delete</a>
-                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
                             @else
                                 <tbody>
                                 <tr>
-                                    <td colspan="3">No Results Found
-                                    </th>
+                                    <td colspan="3">No Auctions Found. Please check later.</td>
                                 </tr>
                                 </tbody>
                             @endif

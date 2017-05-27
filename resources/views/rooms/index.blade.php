@@ -19,7 +19,8 @@
                             <tr>
                                 <th width="20%">ID</th>
                                 <th>Room</th>
-                                <th width="20%">Action</th>
+                                <th width="20%">Min Bid</th>
+                                <th width="10%">Action</th>
                             </tr>
                             </thead>
                             @if($rooms->count() != 0)
@@ -28,9 +29,9 @@
                                     <tr>
                                         <th scope="row">{{ $row->id }}</th>
                                         <td>{{ $row->name }}</td>
+                                        <td>{{ $row->display_min_bid }}</td>
                                         <td>
                                             <a class="btn btn-info btn-xs" href="#" role="button">Edit</a>
-                                            <a class="btn btn-danger btn-xs" href="#" role="button">Delete</a>
                                         </td>
                                     </tr>
                                 @endforeach

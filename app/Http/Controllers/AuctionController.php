@@ -28,6 +28,7 @@ class AuctionController extends Controller
     public function __construct(Auction $auctionRepository, Room $roomRepository, Bid $bidRepository)
     {
         $this->middleware('auth.admin')->except('index', 'show');
+        $this->middleware('auction')->only('show');
         $this->auctionRepository = $auctionRepository;
         $this->roomRepository = $roomRepository;
         $this->bidRepository = $bidRepository;
@@ -77,23 +78,8 @@ class AuctionController extends Controller
      */
     public function show($id)
     {
-        $auction = $this->auctionRepository->find($id);
 
-        if ($auction == null) {
-
-            return $this->sendErrorResponse(
-                'auctions',
-                'Auction does not exist. Please bid on another auction.'
-            );
-
-        } else if ($auction->has_expired) {
-
-            return $this->sendInfoResponse(
-                'auctions',
-                'Auction has expired. Please bid on another auction.'
-            );
-        }
-
+        $auction = request()->get('auction');
         $bids = $this->bidRepository->findAllByAuction($auction->id);
 
         return view('auctions.show', compact('auction', 'bids'));

@@ -11,16 +11,6 @@ class Bid extends Model
     protected $appends = ['display_price'];
 
     /**
-     * Default value for attributes
-     *
-     * @var array
-     */
-    protected $attributes = [
-        'is_accepted' => false,
-        'is_winner' => false
-    ];
-
-    /**
      * Get the user for this bid
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

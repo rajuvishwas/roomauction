@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Repositories\Contracts\AuctionRepositoryInterface as Auction;
 use App\Repositories\Contracts\BidRepositoryInterface as Bid;
-use App\Http\Requests\BidRequest;
-use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class BidController extends Controller
 {
@@ -22,8 +22,8 @@ class BidController extends Controller
 
     public function __construct(Bid $bidRepository, Auction $auctionRepository)
     {
-        $this->middleware('auction');
         $this->middleware('auth.admin')->except('store', 'show');
+        $this->middleware('auction')->only('store');
         $this->bidRepository = $bidRepository;
         $this->auctionRepository = $auctionRepository;
     }
@@ -51,27 +51,12 @@ class BidController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param BidRequest|Request $request
+     * @param Request $request
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
      */
-    public function store(BidRequest $request)
+    public function store(Request $request)
     {
-        $auction = $this->auctionRepository->find($request->input('auction_id'));
-
-        if ($auction == null) {
-
-            return $this->sendErrorResponse(
-                'auctions',
-                'Auction does not exist. Please bid on another auction.'
-            );
-
-        } else if ($auction->has_expired) {
-
-            return $this->sendInfoResponse(
-                'auctions',
-                'Auction has expired. Please bid on another auction.'
-            );
-        }
+        $auction = request()->get('auction');
 
         $isBidAccepted = true;
         if ($auction->latestBid != null && $this->isBidRejected($request->input('price'), $auction->latestBid->price)) {
@@ -83,10 +68,18 @@ class BidController extends Controller
         $this->bidRepository->create($data);
 
         if ($isBidAccepted) {
+
+            if ($this->isLastMinuteBid($auction->expires_at)) {
+                $auctionData['expires_at'] = $auction->expires_at->addMinute(config('app.bid_lastminute_extend'));
+                $this->auctionRepository->update($auctionData, $auction->id);
+            }
+
             return redirect()
                 ->route('auctions.show', ['id' => $auction->id])
                 ->with('status', 'Your bid has been placed.');
+
         } else {
+
             return redirect()
                 ->route('auctions.show', ['id' => $auction->id])
                 ->with('error', 'Your bid was not accepted. Your bid should be above ' . config('app.bid_accepted_percent') . '% of latest bid.');
@@ -150,5 +143,17 @@ class BidController extends Controller
         $oldPrice = floatval($oldPrice);
 
         return $newPrice < ($oldPrice + ($oldPrice * (config('app.bid_accepted_percent') / 100)));
+    }
+
+
+    /**
+     * Check if last minute bid
+     *
+     * @param $expires_at
+     * @return bool
+     */
+    private function isLastMinuteBid($expires_at)
+    {
+        return Carbon::now()->diffInSeconds($expires_at, false) <= 60 ? true : false;
     }
 }
