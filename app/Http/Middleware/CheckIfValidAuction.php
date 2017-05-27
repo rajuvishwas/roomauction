@@ -41,7 +41,7 @@ class CheckIfValidAuction
                 'Auction does not exist. Please bid on another auction.'
             );
 
-        } else if ($auction->has_expired) {
+        } else if ($auction->has_expired & $request->route()->getName() != 'bids.show') {
 
             return $this->sendInfoResponse(
                 'auctions',

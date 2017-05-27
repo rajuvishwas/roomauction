@@ -37,9 +37,9 @@
                                         <td>{{ $row->latestBid != null ? $row->latestBid->display_price : '-' }}</td>
                                         <td>{{ $row->time_left }}</td>
                                         <td>
-                                            <a class="btn btn-info btn-xs"
+                                            <a class="btn btn-primary btn-xs"
                                                href="{{ route('auctions.show', ['id' => $row->id]) }}"
-                                               role="button">Bid</a>
+                                               role="button">Place Bid</a>
                                         </td>
                                     </tr>
                                 @endforeach

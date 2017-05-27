@@ -6,6 +6,7 @@ use App\Http\Requests\BidRequest;
 use App\Repositories\Contracts\AuctionRepositoryInterface as Auction;
 use App\Repositories\Contracts\BidRepositoryInterface as Bid;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class BidController extends Controller
 {
@@ -23,29 +24,9 @@ class BidController extends Controller
     public function __construct(Bid $bidRepository, Auction $auctionRepository)
     {
         $this->middleware('auth.admin')->except('store', 'show');
-        $this->middleware('auction')->only('store');
+        $this->middleware('auction')->only('store', 'show');
         $this->bidRepository = $bidRepository;
         $this->auctionRepository = $auctionRepository;
-    }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -65,7 +46,7 @@ class BidController extends Controller
 
         $data = $request->all();
         $data['is_accepted'] = $isBidAccepted;
-        $this->bidRepository->create($data);
+        $bid = $this->bidRepository->create($data);
 
         if ($isBidAccepted) {
 
@@ -75,8 +56,10 @@ class BidController extends Controller
             }
 
             return redirect()
-                ->route('auctions.show', ['id' => $auction->id])
-                ->with('status', 'Your bid has been placed.');
+                ->route('bids.show', [
+                    'auction' => $auction->id,
+                    'bid' => $bid->encoded_key
+                ])->with('status', 'Your bid has been placed.');
 
         } else {
 
@@ -93,43 +76,24 @@ class BidController extends Controller
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($auctionId, $bidId)
     {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
+        $auction = request()->get('auction');
+        $bidId = $this->bidRepository->decode($bidId);
+        if($bidId != "") {
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param BidRequest|\Illuminate\Http\Request $request
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(BidRequest $request, $id)
-    {
-        //
-    }
+            $bid = $this->bidRepository->find($bidId);
+            if($bid->user_id == Auth::user()->id) {
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+                return view('bids.show', compact('auction', 'bid'));
+
+            }
+
+            return abort(401, 'Not authorized');
+        }
+
+        return abort(401, 'Not authorized');
     }
 
     /**

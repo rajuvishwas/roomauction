@@ -32,7 +32,7 @@
                                 <label for="name" class="col-md-2 text-right">Latest Bid</label>
                                 <div class="col-md-6">{{ $auction->latestBid->display_price }}</div>
                             </div>
-                            @else
+                        @else
                             <div class="row">
                                 <label for="name" class="col-md-2 text-right">Minimum Bid</label>
                                 <div class="col-md-6">{{ $auction->room->display_min_bid }}</div>
@@ -99,7 +99,16 @@
                                 <tbody>
                                 @foreach($bids as $row)
                                     <tr class="{{ $auction->latestBid != null && $row->id == $auction->latestBid->id ? 'success' : '' }}">
-                                        <th scope="row">{{ $row->id }}</th>
+                                        <th scope="row">
+
+                                            @if(Auth::user()->id == $row->user_id)
+                                                <a href="{{ route('bids.show', ['auction' => $auction->id,'bid' => $row->encoded_key]) }}">
+                                                    {{ $row->id }}
+                                                </a>
+                                            @else
+                                                {{ $row->id }}
+                                            @endif
+                                        </th>
                                         <td>{{ $row->user->name }}</td>
                                         <td>{{ $row->display_price }}</td>
                                         <td>

@@ -18,5 +18,5 @@ interface RepositoryInterface
 
     public function findBy($field, $value, $columns = array('*'));
 
-    public function decrypt($key);
+    public function decode($key);
 }

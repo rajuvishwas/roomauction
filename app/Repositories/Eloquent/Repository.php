@@ -88,14 +88,9 @@ abstract class Repository
      * @param $key
      * @return mixed|null
      */
-    public function decrypt($key)
+    public function decode($key)
     {
-        try {
-            return decrypt($key);
-        } catch (DecryptException $decryptException) {
-            return null;
-        }
-
+        return base64_decode($key);
     }
 
     /**
@@ -115,8 +110,8 @@ abstract class Repository
         if (!in_array('*', $columns) && !in_array($key, $columns))
             array_push($columns, $key);
 
-        $before = $this->decode(request('before'));
-        $after = $this->decode(request('after'));
+        $before = $this->decodePaginator(request('before'));
+        $after = $this->decodePaginator(request('after'));
 
         $result = $this->model;
 
@@ -168,8 +163,8 @@ abstract class Repository
                 $perPage,
                 $isFirstPage,
                 $isLastPage,
-                $this->encode($before),
-                $this->encode($after)
+                $this->encodePaginator($before),
+                $this->encodePaginator($after)
             );
         }
 
@@ -190,7 +185,7 @@ abstract class Repository
      * @param bool $encoded
      * @return bool|string
      */
-    private function decode($value)
+    private function decodePaginator($value)
     {
         return (config('app.encoded_paginator')) ? base64_decode($value) : $value;
     }
@@ -200,7 +195,7 @@ abstract class Repository
      * @param bool $encoded
      * @return string
      */
-    private function encode($value)
+    private function encodePaginator($value)
     {
         return (config('app.encoded_paginator')) ? base64_encode($value) : $value;
     }

@@ -8,7 +8,7 @@ class Bid extends Model
 {
     protected $fillable = ['user_id', 'auction_id', 'price', 'is_accepted'];
 
-    protected $appends = ['display_price'];
+    protected $appends = ['display_price', 'encoded_key'];
 
     /**
      * Get the user for this bid
@@ -31,14 +31,33 @@ class Bid extends Model
     }
 
     /**
+     * Get the bid price with currency symbol
+     *
      * @return string
      */
     public function getDisplayPriceAttribute()
     {
-        return config('app.currency_symbol') .' '. $this->price;
+        return config('app.currency_symbol') . ' ' . $this->price;
     }
 
-    public function scopeAccepted($query) {
+    /**
+     *
+     *
+     * @return string
+     */
+    public function getEncodedKeyAttribute()
+    {
+        return base64_encode($this->id);
+    }
+
+    /**
+     * Scope a query to only return accepted bids
+     *
+     * @param $query
+     * @return mixed
+     */
+    public function scopeAccepted($query)
+    {
 
         return $query->where('is_accepted', true);
     }

@@ -18,8 +18,15 @@ Route::get('/', function () {
 Route::group(['middleware' => 'auth'], function() {
 
     Route::resource('rooms', 'RoomController');
-    Route::resource('auctions', 'AuctionController');
-    Route::resource('bids', 'BidController');
+
+    Route::resource('auctions', 'AuctionController', ['except' => [
+        'edit', 'update', 'destroy'
+    ]]);
+
+    Route::post('bids', 'BidController@store')->name('bids.store');
+
+    Route::get('auctions/{auction}/{bid}', 'BidController@show')->name('bids.show');
+
     Route::get('/home', 'HomeController@index')->name('home');
 
 });
