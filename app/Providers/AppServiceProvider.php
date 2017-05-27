@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,10 +14,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        \DB::listen(function ($query) {
-            // echo $query->sql."<br/>";
-            // $query->bindings
-            // $query->time
+        Validator::extend('greater_than', function ($attribute, $value, $parameters, $validator) {
+            $greater_than = floatval($parameters[0]);
+            return $value > $greater_than;
+        });
+
+        Validator::replacer('greater_than', function ($message, $attribute, $rule, $parameters) {
+            return str_replace(
+                '_',
+                ' ',
+                'The ' . $attribute . ' should be greater than ' . config('app.currency_symbol') . ' ' . $parameters[0] . ''
+            );
         });
     }
 

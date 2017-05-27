@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BidRequest;
 use App\Repositories\Contracts\AuctionRepositoryInterface as Auction;
 use App\Repositories\Contracts\BidRepositoryInterface as Bid;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 
 class BidController extends Controller
 {
@@ -51,10 +51,10 @@ class BidController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
+     * @param Request|BidRequest $request
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(BidRequest $request)
     {
         $auction = request()->get('auction');
 
@@ -112,7 +112,7 @@ class BidController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param BidRequest|\Illuminate\Http\Request $request
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
@@ -133,6 +133,9 @@ class BidController extends Controller
     }
 
     /**
+     * Check if bid is rejected when new price less than
+     * bid acceptance percentage of old price
+     *
      * @param $newPrice
      * @param $oldPrice
      * @return bool

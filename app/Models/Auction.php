@@ -49,12 +49,19 @@ class Auction extends Model
         return $query->where('expires_at', '>=', Carbon::now())->orderBy('expires_at');
     }
 
+    /**
+     * Check if auction has expired
+     *
+     * @return bool
+     */
     public function getHasExpiredAttribute()
     {
         return Carbon::now() >= $this->expires_at;
     }
 
     /**
+     * Get the difference between expired time and current time
+     *
      * @return mixed
      */
     public function getTimeleftAttribute()
