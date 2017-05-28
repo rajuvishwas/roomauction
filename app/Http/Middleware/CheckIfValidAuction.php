@@ -37,15 +37,15 @@ class CheckIfValidAuction
         if ($auction == null) {
 
             return $this->sendErrorResponse(
-                'auctions',
-                'Auction does not exist. Please bid on another auction.'
+                'Auction does not exist. Please bid on another auction.',
+                'auctions.index'
             );
 
         } else if ($auction->has_expired & $request->route()->getName() != 'bids.show') {
 
             return $this->sendInfoResponse(
-                'auctions',
-                'Auction has expired. Please bid on another auction.'
+                'Auction has expired. Please bid on another auction.',
+                'auctions.index'
             );
         }
 
@@ -54,6 +54,8 @@ class CheckIfValidAuction
     }
 
     /**
+     * Get the Auction Id from request or route
+     *
      * @param $request
      * @return mixed
      */

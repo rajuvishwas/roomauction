@@ -5,6 +5,21 @@
         <div class="row">
             <div class="col-md-12 col-md-offset-0">
 
+                @if($auction->latestBid->id == $bid->id)
+                    <div class="alert alert-success text-center">
+                        <strong>Congratulations!</strong>
+                        @if($auction->has_expired)
+                            Your bid is the winner.
+                        @else
+                            Your bid is winning.
+                        @endif
+                    </div>
+                @else
+                    <div class="alert alert-danger text-center">
+                        <strong>Sorry!</strong> Your bid is not a winner.
+                    </div>
+                @endif
+
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         Auction Details
@@ -78,21 +93,6 @@
 
                     </div>
                 </div>
-
-                @if($auction->latestBid->id == $bid->id)
-                    <div class="alert alert-success text-center">
-                        <strong>Congratulations!</strong>
-                        @if($auction->has_expired)
-                            Your bid is the winner.
-                        @else
-                            Your bid is winning.
-                        @endif
-                    </div>
-                @else
-                    <div class="alert alert-danger text-center">
-                        <strong>Sorry!</strong> Your bid is not winner.
-                    </div>
-                @endif
 
             </div>
         </div>

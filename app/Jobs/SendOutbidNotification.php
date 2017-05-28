@@ -37,7 +37,8 @@ class SendOutbidNotification implements ShouldQueue
     }
 
     /**
-     * Execute the job.
+     * Send notification to Partners API,
+     * when their bid is no longer a winner.
      *
      * @return void
      */

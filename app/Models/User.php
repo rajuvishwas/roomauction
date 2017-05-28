@@ -40,7 +40,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get user role
+     * Get the user role
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
@@ -49,6 +49,11 @@ class User extends Authenticatable
         return $this->belongsTo('App\Models\Role');
     }
 
+    /**
+     * Check if user is admin
+     *
+     * @return bool
+     */
     public function isAdmin() {
         return ( $this->role->id == self::ROLE_ADMIN ) ? true : false;
     }

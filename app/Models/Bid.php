@@ -41,7 +41,7 @@ class Bid extends Model
     }
 
     /**
-     *
+     * Get the encoded key for bid id
      *
      * @return string
      */

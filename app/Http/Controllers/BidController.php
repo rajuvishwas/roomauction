@@ -22,10 +22,16 @@ class BidController extends Controller
      */
     private $auctionRepository;
 
+    /**
+     * BidController constructor.
+     * @param Bid $bidRepository
+     * @param Auction $auctionRepository
+     */
     public function __construct(Bid $bidRepository, Auction $auctionRepository)
     {
         $this->middleware('auth.admin')->except('store', 'show');
         $this->middleware('auction')->only('store', 'show');
+
         $this->bidRepository = $bidRepository;
         $this->auctionRepository = $auctionRepository;
     }
@@ -40,15 +46,10 @@ class BidController extends Controller
     {
         $auction = request()->get('auction');
 
-        $isBidAccepted = true;
-        if ($auction->latestBid != null
-            && $this->isBidRejected(
-                $request->input('price'),
-                $auction->latestBid->price)
-        ) {
-
-            $isBidAccepted = false;
-        }
+        $isBidAccepted = $this->isBidAccepted(
+            $request->input('price'),
+            $auction->latestBid
+        );
 
         $data = $request->all();
         $data['is_accepted'] = $isBidAccepted;
@@ -66,17 +67,24 @@ class BidController extends Controller
 
             dispatch(new SendOutbidNotification($auction->latestBid, $bid));
 
-            return redirect()
-                ->route('bids.show', [
+            return $this->sendSuccessResponse(
+                'Your bid has been placed.',
+                'bids.show',
+                [
                     'auction' => $auction->id,
-                    'bid' => $bid->encoded_key
-                ])->with('status', 'Your bid has been placed.');
+                    'bid' => $bid->encode_key
+                ]
+            );
 
         } else {
 
-            return redirect()
-                ->route('auctions.show', ['id' => $auction->id])
-                ->with('error', 'Your bid was not accepted. Your bid should be above ' . config('app.bid_accepted_percent') . '% of latest bid.');
+            return $this->sendErrorResponse(
+                'Your bid was not accepted. Your bid should be above ' . config('app.bid_accepted_percent') . '% of latest bid.',
+                'auctions.show',
+                [
+                    'auction' => $auction->id
+                ]
+            );
         }
 
     }
@@ -99,30 +107,42 @@ class BidController extends Controller
             $bid = $this->bidRepository->find($bidId);
             if ($bid->user_id == Auth::user()->id) {
 
-                return view('bids.show', compact('auction', 'bid'));
+                return view(
+                    'bids.show',
+                    compact('auction', 'bid')
+                );
 
             }
 
-            return abort(401, 'Not authorized');
+            return $this->sendErrorResponse(
+                'Unauthorized Access',
+                'home'
+            );
         }
 
-        return abort(401, 'Not authorized');
+        return $this->sendErrorResponse(
+            'Unauthorized Access',
+            'home'
+        );
     }
 
     /**
-     * Check if bid is rejected when new price less than
+     * Check if bid is accepted when new price less than
      * bid acceptance percentage of old price
      *
      * @param $newPrice
-     * @param $oldPrice
+     * @param $oldBid
      * @return bool
      */
-    private function isBidRejected($newPrice, $oldPrice)
+    private function isBidAccepted($newPrice, $oldBid)
     {
-        $newPrice = floatval($newPrice);
-        $oldPrice = floatval($oldPrice);
+        if($oldBid == null)
+            return true;
 
-        return $newPrice < ($oldPrice + ($oldPrice * (config('app.bid_accepted_percent') / 100)));
+        $newPrice = floatval($newPrice);
+        $oldPrice = floatval($oldBid->price);
+
+        return $newPrice > ($oldPrice + ($oldPrice * (config('app.bid_accepted_percent') / 100)));
     }
 
 

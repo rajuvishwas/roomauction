@@ -23,6 +23,8 @@ class AuctionRepository extends Repository implements AuctionRepositoryInterface
     }
 
     /**
+     * Create auction for a room
+     *
      * @param array $data
      * @return mixed
      */
@@ -33,6 +35,8 @@ class AuctionRepository extends Repository implements AuctionRepositoryInterface
     }
 
     /**
+     * Get lists of auctionable rooms and latest bid details
+     *
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
     public function auctionable()
@@ -41,6 +45,8 @@ class AuctionRepository extends Repository implements AuctionRepositoryInterface
     }
 
     /**
+     * Get auction details with latest bid
+     *
      * @param $id
      * @param array $columns
      * @return mixed

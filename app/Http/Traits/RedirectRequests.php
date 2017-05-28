@@ -5,24 +5,47 @@ namespace App\Http\Traits;
 trait RedirectRequests
 {
     /**
-     * @param $to
+     * Return with error message
+     *
      * @param $message
+     * @param $routeName
+     * @param array $routeParams
      * @return \Illuminate\Http\RedirectResponse
      */
-    protected function sendErrorResponse($to, $message)
+    protected function sendErrorResponse($message, $routeName, $routeParams = array())
     {
-        return redirect($to)
+        return redirect()
+            ->route($routeName, $routeParams)
             ->with('error', $message);
     }
 
     /**
-     * @param $to
+     * Return with info message
+     *
      * @param $message
+     * @param $routeName
+     * @param array $routeParams
      * @return \Illuminate\Http\RedirectResponse
      */
-    protected function sendInfoResponse($to, $message)
+    protected function sendInfoResponse($message, $routeName, $routeParams = array())
     {
-        return redirect($to)
+        return redirect()
+            ->route($routeName, $routeParams)
             ->with('info', $message);
+    }
+
+    /**
+     * Return with success message
+     *
+     * @param $message
+     * @param $routeName
+     * @param array $routeParams
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    protected function sendSuccessResponse($message, $routeName, $routeParams = array())
+    {
+        return redirect()
+            ->route($routeName, $routeParams)
+            ->with('success', $message);
     }
 }

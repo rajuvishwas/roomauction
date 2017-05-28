@@ -29,6 +29,7 @@ class AuctionController extends Controller
     {
         $this->middleware('auth.admin')->except('index', 'show');
         $this->middleware('auction')->only('show');
+
         $this->auctionRepository = $auctionRepository;
         $this->roomRepository = $roomRepository;
         $this->bidRepository = $bidRepository;
@@ -42,7 +43,11 @@ class AuctionController extends Controller
     public function index()
     {
         $auctions = $this->auctionRepository->auctionable();
-        return view('auctions.index', compact('auctions'));
+
+        return view(
+            'auctions.index',
+            compact('auctions')
+        );
     }
 
     /**
@@ -53,7 +58,11 @@ class AuctionController extends Controller
     public function create()
     {
         $rooms = $this->roomRepository->inactive();
-        return view('auctions.create', compact('rooms'));
+
+        return view(
+            'auctions.create',
+            compact('rooms')
+        );
     }
 
     /**
@@ -66,8 +75,10 @@ class AuctionController extends Controller
     {
         $this->auctionRepository->create($request->all());
 
-        return redirect('auctions')
-            ->with('status', 'Auction has been added.');
+        return $this->sendSuccessResponse(
+            'Auction has been added.',
+            'auctions.index'
+        );
     }
 
     /**
@@ -82,6 +93,9 @@ class AuctionController extends Controller
         $auction = request()->get('auction');
         $bids = $this->bidRepository->findAllByAuction($auction->id);
 
-        return view('auctions.show', compact('auction', 'bids'));
+        return view(
+            'auctions.show',
+            compact('auction', 'bids')
+        );
     }
 }

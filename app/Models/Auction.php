@@ -33,6 +33,11 @@ class Auction extends Model
         return $this->hasMany('App\Models\Bid');
     }
 
+    /**
+     * Get the latest bid received for auction
+     *
+     * @return mixed
+     */
     public function latestBid()
     {
         return $this->hasOne('App\Models\Bid')->accepted()->latest();

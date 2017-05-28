@@ -9,6 +9,8 @@ abstract class Repository
 {
 
     /**
+     * Get all rows for the table
+     *
      * @param array $columns
      * @return mixed
      */
@@ -18,6 +20,8 @@ abstract class Repository
     }
 
     /**
+     * Get all rows with pagination support
+     *
      * @param int $perPage
      * @param array $columns
      * @param string $key
@@ -30,6 +34,8 @@ abstract class Repository
     }
 
     /**
+     * Create row in a table
+     *
      * @param array $data
      * @return mixed
      */
@@ -39,6 +45,8 @@ abstract class Repository
     }
 
     /**
+     * Update a row in a table
+     *
      * @param array $data
      * @param $id
      * @param string $attribute
@@ -50,6 +58,8 @@ abstract class Repository
     }
 
     /**
+     * Delete a row in a table
+     *
      * @param $id
      * @return mixed
      */
@@ -59,6 +69,8 @@ abstract class Repository
     }
 
     /**
+     * Find a row in a table
+     *
      * @param $id
      * @param array $columns
      * @return mixed
@@ -69,6 +81,8 @@ abstract class Repository
     }
 
     /**
+     * Find a row / lists in a table by any given field
+     *
      * @param $field
      * @param $value
      * @param array $columns
@@ -85,6 +99,8 @@ abstract class Repository
     }
 
     /**
+     * Decode the encoded text
+     *
      * @param $key
      * @return mixed|null
      */
@@ -94,13 +110,14 @@ abstract class Repository
     }
 
     /**
-     * @param array $where
+     * Get all rows with cursor pagination support
+     *
      * @param $perPage
      * @param $columns
      * @param $key
      * @param $order
+     * @param array $filters
      * @return CursorPaginator
-     * @internal param bool $encoded
      */
     protected function cursorPaginate($perPage, $columns, $key, $order, array $filters = array())
     {
@@ -172,6 +189,8 @@ abstract class Repository
     }
 
     /**
+     * Reverse order for cursor pagination support
+     *
      * @param $order
      * @return string
      */
@@ -181,6 +200,8 @@ abstract class Repository
     }
 
     /**
+     * Decode pagination links for cursor pagination support
+     *
      * @param $value
      * @param bool $encoded
      * @return bool|string
@@ -191,6 +212,8 @@ abstract class Repository
     }
 
     /**
+     * Encode pagination links for cursor pagination support
+     *
      * @param $value
      * @param bool $encoded
      * @return string
@@ -201,6 +224,8 @@ abstract class Repository
     }
 
     /**
+     * Reverse the comparator for cursor pagination support
+     *
      * @param $comparator
      * @param $order
      * @return string

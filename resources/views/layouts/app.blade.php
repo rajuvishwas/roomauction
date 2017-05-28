@@ -89,9 +89,9 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12 col-md-offset-0">
-                @if (session('status'))
+                @if (session('success'))
                     <div class="alert alert-success">
-                        {{ session('status') }}
+                        {{ session('success') }}
                     </div>
                 @endif
                 @if (session('error'))

@@ -14,6 +14,10 @@ class BidRepository extends Repository implements BidRepositoryInterface
      */
     protected $model;
 
+    /**
+     * BidRepository constructor.
+     * @param Bid $model
+     */
     public function __construct(Bid $model)
     {
 
@@ -21,6 +25,8 @@ class BidRepository extends Repository implements BidRepositoryInterface
     }
 
     /**
+     * Create bid for auction and user
+     *
      * @param array $data
      * @return mixed
      */
@@ -31,6 +37,8 @@ class BidRepository extends Repository implements BidRepositoryInterface
     }
 
     /**
+     * Get lists of bids received for auction
+     *
      * @param $auctionId
      * @return \App\Pagination\CursorPaginator
      */

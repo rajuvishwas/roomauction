@@ -20,6 +20,7 @@ class RoomController extends Controller
     public function __construct(Room $repository)
     {
         $this->middleware('auth.admin');
+
         $this->repository = $repository;
     }
 
@@ -31,7 +32,11 @@ class RoomController extends Controller
     public function index()
     {
         $rooms = $this->repository->paginate(config('app.results_per_page'));
-        return view('rooms.index', compact('rooms'));
+
+        return view(
+            'rooms.index',
+            compact('rooms')
+        );
     }
 
     /**
@@ -41,7 +46,9 @@ class RoomController extends Controller
      */
     public function create()
     {
-        return view('rooms.create');
+        return view(
+            'rooms.create'
+        );
     }
 
     /**
@@ -54,52 +61,9 @@ class RoomController extends Controller
     {
         $this->repository->create($request->all());
 
-        return redirect('rooms')
-            ->with('status', 'Room has been added.');
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param RoomRequest|Request $request
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(RoomRequest $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        return $this->sendSuccessResponse(
+            'Room has been added.',
+            'rooms.index'
+        );
     }
 }

@@ -21,6 +21,11 @@ class Room extends Model
         return $this->hasMany('App\Models\Auction');
     }
 
+    /**
+     * Get the price with currency symbol
+     *
+     * @return string
+     */
     public function getDisplayMinBidAttribute()
     {
         return config('app.currency_symbol') . ' ' . $this->min_bid;
