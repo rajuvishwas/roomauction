@@ -22,6 +22,7 @@ class CreateUsersTable extends Migration
                     ->references('id')->on('roles')
                     ->onDelete('cascade');
             $table->string('password');
+            $table->text('callback_url')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

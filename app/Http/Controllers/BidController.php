@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\BidRequest;
+use App\Jobs\SendOutbidNotification;
 use App\Repositories\Contracts\AuctionRepositoryInterface as Auction;
 use App\Repositories\Contracts\BidRepositoryInterface as Bid;
 use Carbon\Carbon;
@@ -40,7 +41,12 @@ class BidController extends Controller
         $auction = request()->get('auction');
 
         $isBidAccepted = true;
-        if ($auction->latestBid != null && $this->isBidRejected($request->input('price'), $auction->latestBid->price)) {
+        if ($auction->latestBid != null
+            && $this->isBidRejected(
+                $request->input('price'),
+                $auction->latestBid->price)
+        ) {
+
             $isBidAccepted = false;
         }
 
@@ -51,9 +57,14 @@ class BidController extends Controller
         if ($isBidAccepted) {
 
             if ($this->isLastMinuteBid($auction->expires_at)) {
-                $auctionData['expires_at'] = $auction->expires_at->addMinute(config('app.bid_lastminute_extend'));
+
+                $auctionData['expires_at'] = $auction->expires_at
+                    ->addMinute(config('app.bid_lastminute_extend'));
+
                 $this->auctionRepository->update($auctionData, $auction->id);
             }
+
+            dispatch(new SendOutbidNotification($auction->latestBid, $bid));
 
             return redirect()
                 ->route('bids.show', [
@@ -73,18 +84,20 @@ class BidController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int $id
+     * @param $auctionId
+     * @param $bidId
      * @return \Illuminate\Http\Response
+     * @internal param int $id
      */
     public function show($auctionId, $bidId)
     {
 
         $auction = request()->get('auction');
         $bidId = $this->bidRepository->decode($bidId);
-        if($bidId != "") {
+        if ($bidId != "") {
 
             $bid = $this->bidRepository->find($bidId);
-            if($bid->user_id == Auth::user()->id) {
+            if ($bid->user_id == Auth::user()->id) {
 
                 return view('bids.show', compact('auction', 'bid'));
 
