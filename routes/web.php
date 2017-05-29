@@ -11,9 +11,7 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'HomeController@index')->name('home');
 
 Route::group(['middleware' => 'auth'], function() {
 
@@ -26,8 +24,6 @@ Route::group(['middleware' => 'auth'], function() {
     Route::post('bids', 'BidController@store')->name('bids.store');
 
     Route::get('auctions/{auction}/{bid}', 'BidController@show')->name('bids.show');
-
-    Route::get('/home', 'HomeController@index')->name('home');
 
 });
 
