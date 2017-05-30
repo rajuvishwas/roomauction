@@ -2,11 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Models\Role;
 use App\Models\User;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class LoginTest extends TestCase
 {
@@ -15,32 +14,26 @@ class LoginTest extends TestCase
     /** @test */
     public function a_guest_can_view_login_form()
     {
-        // When guest visits login page
-        $response = $this->get('/login');
-
-        // then display login form
-        $response->assertStatus(200);
-        $response->assertSee('E-Mail Address');
-        $response->assertSee('Password');
+        $this->get('/login')
+            ->assertStatus(200)
+            ->assertSee('E-Mail Address')
+            ->assertSee('Password');
     }
 
     /** @test */
     public function a_logged_in_user_is_redirected_to_homepage()
     {
-        // Given that we have a user
-        $user = factory(User::class)->create([
-            'role_id' => self::ROLE_PARTNER
-        ]);
+        $this->signInAsPartner();
 
-        // and we are logged in
-        $this->actingAs($user);
+        $this->get('/login')
+            ->assertStatus(302)
+            ->assertRedirect('/');
 
-        // when user visit login page
-        $response = $this->get('/login');
+        $this->signInAsAdmin();
 
-        // then redirect to homepage
-        $response->assertStatus(302);
-        $response->assertRedirect('/');
+        $this->get('/login')
+            ->assertStatus(302)
+            ->assertRedirect('/');
 
     }
 
@@ -48,19 +41,17 @@ class LoginTest extends TestCase
     function a_user_can_logout()
     {
 
-        // Given that we have a logged in user
-        $user = factory(User::class)->create([
-            'role_id' => self::ROLE_PARTNER
-        ]);
+        $this->signInAsPartner();
 
-        $this->actingAs($user);
+        $this->post('/logout')
+            ->assertStatus(302)
+            ->assertRedirect('/');
 
-        // When click on logout
-        $response = $this->post('/logout');
+        $this->signInAsAdmin();
 
-        // then redirect to homepage
-        $response->assertStatus(302);
-        $response->assertRedirect('/');
+        $this->post('/logout')
+            ->assertStatus(302)
+            ->assertRedirect('/');
 
     }
 
@@ -68,15 +59,49 @@ class LoginTest extends TestCase
     function a_guest_cannot_login_without_email()
     {
 
-        $response = $this->post('/login');
-        $response->assertSessionHasErrors(['email' => 'The email field is required.']);
+        $this->post('/login')
+            ->assertStatus(302)
+            ->assertSessionHasErrors(['email' => 'The email field is required.']);
     }
 
     /** @test */
     function a_guest_cannot_login_without_password()
     {
 
-        $response = $this->post('/login');
-        $response->assertSessionHasErrors(['password' => 'The password field is required.']);
+        $this->post('/login')
+            ->assertStatus(302)
+            ->assertSessionHasErrors(['password' => 'The password field is required.']);
+    }
+
+    /** @test */
+    function a_guest_cannot_login_with_invalid_password()
+    {
+        $user = $this->createPartnerUser([
+            'password' => bcrypt('test')
+        ]);
+
+        $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'testing'])
+            ->assertStatus(302)
+            ->assertSessionHasErrors(['email' => 'These credentials do not match our records.']);
+
+    }
+
+    /** @test */
+    function a_user_can_logged_in()
+    {
+        $user = $this->createPartnerUser([
+            'password' => bcrypt('test')
+        ]);
+
+        $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'test'])
+            ->assertStatus(302)
+            ->assertSessionMissing('errors');
+
+        $this->get('/')
+            ->assertSee('Dashboard');
     }
 }

@@ -14,68 +14,34 @@ class HomeTest extends TestCase
     /** @test */
     function a_guest_can_view_homepage()
     {
-        $response = $this->get('/');
-
-        $response->assertStatus(200);
-        $response->assertSee('Login');
-        $response->assertSee('Register');
-        $response->assertDontSee('Logout');
+        $this->get('/')
+            ->assertStatus(200)
+            ->assertSee('Login')
+            ->assertSee('Register');
     }
 
     /** @test */
     function a_partner_can_view_dashboard()
     {
-        // Given that we have user with partners role
-        $role = factory(Role::class)->create([
-            'id' => self::ROLE_PARTNER,
-            'name' => 'partner'
-        ]);
+        $this->signInAsPartner();
 
-        $user = factory(User::class)->create([
-            'role_id' => $role->id
-        ]);
-
-        // and we are logged in as partner
-        $this->actingAs($user);
-
-        // When we visit homepage
-        $response = $this->get('/');
-
-        // Then we view dashboard with auction menu
-        $response->assertStatus(200);
-        $response->assertSee('Auctions');
-        $response->assertSee('Dashboard');
-        $response->assertSee('Logout');
-        $response->assertDontSee('Login');
-        $response->assertDontSee('Register');
+        $this->get('/')
+            ->assertStatus(200)
+            ->assertSee('Auctions')
+            ->assertSee('Dashboard')
+            ->assertSee('Logout');
     }
 
     /** @test */
     function an_admin_can_view_dashboard()
     {
-        // Given that we have user with partners role
-        $role = factory(Role::class)->create([
-            'id' => self::ROLE_ADMIN,
-            'name' => 'admin'
-        ]);
+        $this->signInAsAdmin();
 
-        $user = factory(User::class)->create([
-            'role_id' => $role->id
-        ]);
-
-        // and we are logged in as partner
-        $this->actingAs($user);
-
-        // When we visit homepage
-        $response = $this->get('/');
-
-        // Then we view dashboard with rooms and auction menu
-        $response->assertStatus(200);
-        $response->assertSee('Rooms');
-        $response->assertSee('Auctions');
-        $response->assertSee('Dashboard');
-        $response->assertSee('Logout');
-        $response->assertDontSee('Login');
-        $response->assertDontSee('Register');
+        $this->get('/')
+            ->assertStatus(200)
+            ->assertSee('Rooms')
+            ->assertSee('Auctions')
+            ->assertSee('Dashboard')
+            ->assertSee('Logout');
     }
 }
