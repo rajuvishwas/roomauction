@@ -19,6 +19,7 @@ $factory->define(App\Models\User::class, function (Faker\Generator $faker) {
         'name' => $faker->name,
         'email' => $faker->unique()->safeEmail,
         'role_id' => 2,
+        'callback_url' => $faker->url,
         'password' => $password ?: $password = bcrypt('secret'),
         'remember_token' => str_random(10),
     ];
@@ -36,5 +37,15 @@ $factory->define(App\Models\Room::class, function (Faker\Generator $faker) {
     return [
         'name' => $faker->streetName,
         'min_bid' => $faker->numberBetween(100, 500)
+    ];
+});
+
+$factory->define(App\Models\Auction::class, function (Faker\Generator $faker) {
+
+    return [
+        'room_id' => function () {
+            return factory('App\Models\Room')->create()->id;
+        },
+        'expires_at' => \Carbon\Carbon::now()->addMinute(config('app.auction_expires'))
     ];
 });

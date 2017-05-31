@@ -71,7 +71,7 @@ class Auction extends Model
      */
     public function getTimeleftAttribute()
     {
-        return $this->expires_at->diffForHumans(Carbon::now(), true);
+        return $this->expires_at != null ? $this->expires_at->diffForHumans(Carbon::now(), true) : null;
     }
 
 }

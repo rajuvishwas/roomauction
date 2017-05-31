@@ -44,6 +44,10 @@ class AuctionController extends Controller
     {
         $auctions = $this->auctionRepository->auctionable();
 
+        if (request()->wantsJson()) {
+            return $auctions;
+        }
+
         return view(
             'auctions.index',
             compact('auctions')

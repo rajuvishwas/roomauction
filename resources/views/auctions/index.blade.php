@@ -6,7 +6,7 @@
             <div class="col-md-12 col-md-offset-0">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        Auction
+                        Auctions
                         @if(Auth::user()->isAdmin())
                             <div class="btn-group pull-right">
                                 <a href="{{ route('auctions.create') }}" class="btn btn-primary btn-xs">Add Auction</a>

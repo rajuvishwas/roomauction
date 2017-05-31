@@ -83,11 +83,11 @@ class RoomTest extends TestCase
             ->assertSessionHasErrors('min_bid');
     }
 
-    function submitRoom($params = [])
+    function submitRoom($overrides = [])
     {
         $this->signInAsAdmin();
 
-        $room = factory(Room::class)->make($params);
+        $room = factory(Room::class)->make($overrides);
 
         return $this->post('/rooms', $room->toArray());
     }
