@@ -25,13 +25,13 @@ class BidRequest extends FormRequest
     {
         $auction = request()->get('auction');
 
-        $min_bid = $auction->room->min_bid;
+        $min_bid = ( $auction->room->min_bid - 1);
         if ($auction->latestBid != null)
             $min_bid = $auction->latestBid->price;
 
         return [
             'auction_id' => 'required|integer',
-            'price' => 'required|integer|greater_than:' . $min_bid . ''
+            'price' => 'required|numeric|greater_than:' . $min_bid . ''
         ];
     }
 }

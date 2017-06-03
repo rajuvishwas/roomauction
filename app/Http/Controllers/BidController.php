@@ -65,14 +65,15 @@ class BidController extends Controller
                 $this->auctionRepository->update($auctionData, $auction->id);
             }
 
-            dispatch(new SendOutbidNotification($auction->latestBid, $bid));
+            if ($auction->latestBid != null)
+                dispatch(new SendOutbidNotification($auction->latestBid, $bid));
 
             return $this->sendSuccessResponse(
                 'Your bid has been placed.',
                 'bids.show',
                 [
                     'auction' => $auction->id,
-                    'bid' => $bid->encode_key
+                    'bid' => $bid->encoded_key
                 ]
             );
 
@@ -136,7 +137,7 @@ class BidController extends Controller
      */
     private function isBidAccepted($newPrice, $oldBid)
     {
-        if($oldBid == null)
+        if ($oldBid == null)
             return true;
 
         $newPrice = floatval($newPrice);

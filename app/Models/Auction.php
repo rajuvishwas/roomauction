@@ -40,7 +40,7 @@ class Auction extends Model
      */
     public function latestBid()
     {
-        return $this->hasOne('App\Models\Bid')->accepted()->latest();
+        return $this->hasOne('App\Models\Bid')->accepted()->latest()->orderBy('id', 'desc');
     }
 
     /**

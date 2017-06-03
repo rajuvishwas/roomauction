@@ -49,3 +49,19 @@ $factory->define(App\Models\Auction::class, function (Faker\Generator $faker) {
         'expires_at' => \Carbon\Carbon::now()->addMinute(config('app.auction_expires'))
     ];
 });
+
+$factory->define(App\Models\Bid::class, function (Faker\Generator $faker) {
+
+    return [
+        'user_id' => function () {
+            return factory('App\Models\User')->create()->id;
+        },
+        'auction_id' => function () {
+            return factory('App\Models\Auction')->create()->id;
+        },
+        'price' => function(array $bid) {
+            return App\Models\Auction::find($bid['auction_id'])->room->min_bid;
+        },
+        'is_accepted' => true
+    ];
+});

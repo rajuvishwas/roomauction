@@ -90,4 +90,15 @@ abstract class TestCase extends BaseTestCase
             'name' => $name
         ]);
     }
+
+    /**
+     * Get the accepted bid price
+     *
+     * @param $price
+     * @return mixed
+     */
+    function getAcceptedBidPrice($price)
+    {
+        return $price + ($price * (config('app.bid_accepted_percent') / 100)) + 1;
+    }
 }

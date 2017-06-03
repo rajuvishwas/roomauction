@@ -17,12 +17,12 @@ class SendOutbidNotification implements ShouldQueue
     /**
      * @var Bid
      */
-    private $oldBid;
+    protected $oldBid;
 
     /**
      * @var Bid
      */
-    private $newBid;
+    protected $newBid;
 
     /**
      * Create a new job instance.
@@ -62,5 +62,21 @@ class SendOutbidNotification implements ShouldQueue
             );
 
         }
+    }
+
+    /**
+     * @return Bid
+     */
+    public function getOldBid()
+    {
+        return $this->oldBid;
+    }
+
+    /**
+     * @return Bid
+     */
+    public function getNewBid()
+    {
+        return $this->newBid;
     }
 }
