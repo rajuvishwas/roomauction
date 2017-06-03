@@ -52,6 +52,7 @@ class BidController extends Controller
         );
 
         $data = $request->all();
+        $data['user_id'] = Auth::user()->id;
         $data['is_accepted'] = $isBidAccepted;
         $bid = $this->bidRepository->create($data);
 

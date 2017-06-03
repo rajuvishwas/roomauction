@@ -25,18 +25,6 @@ class BidRepository extends Repository implements BidRepositoryInterface
     }
 
     /**
-     * Create bid for auction and user
-     *
-     * @param array $data
-     * @return mixed
-     */
-    public function create(array $data)
-    {
-        $data['user_id'] = Auth::user()->id;
-        return parent::create($data);
-    }
-
-    /**
      * Get lists of bids received for auction
      *
      * @param $auctionId
