@@ -1,52 +1,91 @@
-<p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
+<h1>Room Auction</h1>
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
+<p>
+<a href="https://travis-ci.org/rajuvishwas/roomauction"><img src="https://travis-ci.org/rajuvishwas/roomauction.svg?branch=master" alt="Build Status" /></a>
 </p>
 
-## About Laravel
+## Server Requirement
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as:
+* PHP >= 5.6.4
+* OpenSSL PHP Extension
+* PDO PHP Extension
+* Mbstring PHP Extension
+* Tokenizer PHP Extension
+* XML PHP Extension
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Installation
 
-Laravel is accessible, yet powerful, providing tools needed for large, robust applications. A superb combination of simplicity, elegance, and innovation give you tools you need to build any application with which you are tasked.
+We need <a href="https://getcomposer.org/">Composer</a> to manage our dependencies, so make sure you have Composer installed in your machine. Once installed, please follow the below steps:
 
-## Learning Laravel
+### Setup Project
 
-Laravel has the most extensive and thorough documentation and video tutorial library of any modern web application framework. The [Laravel documentation](https://laravel.com/docs) is thorough, complete, and makes it a breeze to get started learning the framework.
+* `git clone https://github.com/rajuvishwas/roomauction.git roomauction` to clone repository
 
-If you're not in the mood to read, [Laracasts](https://laracasts.com) contains over 900 video tutorials on a range of topics including Laravel, modern PHP, unit testing, JavaScript, and more. Boost the skill level of yourself and your entire team by digging into our comprehensive video library.
+* `cd roomauction`
 
-## Laravel Sponsors
+* `composer install` to install all dependencies
 
-We would like to extend our thanks to the following sponsors for helping fund on-going Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](http://patreon.com/taylorotwell):
+* `composer update`
 
-- **[Vehikl](http://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[British Software Development](https://www.britishsoftware.co)**
-- **[Styde](https://styde.net)**
-- **[Codecourse](https://www.codecourse.com)**
-- [Fragrantica](https://www.fragrantica.com)
-- [SOFTonSOFA](https://softonsofa.com/)
+* `cp .env.example .env`
 
-## Contributing
+* `php artisan key:generate` to regenerate secure key for your environment
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](http://laravel.com/docs/contributions).
+### Setup Database
 
-## Security Vulnerabilities
+If you are using MySQL, create a database and update the below configuration in `.env` file:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
+* DB_CONNECTION=mysql
 
-## License
+* DB_DATABASE
 
-The Laravel framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
+* DB_USERNAME
+
+* DB_PASSWORD
+
+If you are using sqlite, then follow the below steps:
+
+* `touch database/database.sqlite` to create a sqlite file in database folder
+
+* `DB_CONNECTION=sqlite` to change connection to sqlite
+
+### Setup Configurations
+
+Below are configuration which you can change for your applications:
+
+* `APP_ADMIN` - An administrator user will be created with the specified email address
+
+* `APP_RESULTS_PER_PAGE` - Lists of results to be displayed on page when using pagination
+
+* `APP_ENCODED_PAGINATOR` - Page number will be encoded when using pagination
+
+* `APP_AUCTION_EXPIRES` - Auction expiry time in minutes
+
+* `APP_CURRENCY_SYMBOL` - Currency symbol for your application
+
+* `APP_BID_ACCEPTED_PERCENT` - Set acceptance percentage for bid
+
+* `APP_BID_LASTMINUTE_EXTEND` - Set extended time for last minute bid in minutes
+
+### Migration
+
+To setup database and seed tables with default values, run the below step:
+
+* `php artisan migrate --seed`
+
+## Run
+
+### Run on Browser
+To run the application on browser, run the below command:
+
+* `php artisan serve`
+
+We send a notification to Partners API, when their bid is no longer winner. We use Laravel Queues for this which help us to delegate the API call to their server. To start the queue worker, use the below command:
+
+* `php artisan queue:work`
+
+### Run Test
+
+We use PHPUnit for our testing, so run the below command:
+
+* `vendor\bin\phpunit`
