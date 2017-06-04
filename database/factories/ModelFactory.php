@@ -35,7 +35,7 @@ $factory->define(App\Models\Role::class, function (Faker\Generator $faker) {
 $factory->define(App\Models\Room::class, function (Faker\Generator $faker) {
 
     return [
-        'name' => $faker->streetName,
+        'name' => $faker->name,
         'min_bid' => $faker->numberBetween(100, 500)
     ];
 });
