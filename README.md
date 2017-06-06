@@ -85,7 +85,7 @@ We send a notification to Partners API, when their bid is no longer winner. We u
 * `php artisan queue:work`
 
 You can use the below details to login:
-* Email Address: `admin@roomquickly.com` or value set on APP_ADMIN in .env file
+* Email Address: `admin@roomsquickly.com` or value set on APP_ADMIN in .env file
 * Password: `admin`
 
 ### Run Test
